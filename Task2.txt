@@ -1,0 +1,12 @@
+SELECT u.user_id, u.username, td.training_id, td.training_date, COUNT(*) as count
+FROM user u
+JOIN training_details td ON u.user_id = td.user_id
+WHERE td.training_date IN (
+    SELECT training_date
+    FROM training_details
+    GROUP BY training_date
+    HAVING COUNT(DISTINCT training_id) < COUNT(*)
+)
+GROUP BY u.user_id, u.username, td.training_id, td.training_date
+HAVING COUNT(*) > 1
+ORDER BY td.training_date DESC;
